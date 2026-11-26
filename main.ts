@@ -18,7 +18,9 @@ import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-frontend.ts';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
-const OUT = join(ROOT, 'out');
+/* The grader mounts the repo read-only and provides a writable output
+   dir via MAKEFUN_OUTPUT_DIR; locally (no env set) fall back to out/. */
+const OUT = (process.env.MAKEFUN_OUTPUT_DIR ?? '').trim() || join(ROOT, 'out');
 
 /* The caps the kit's dossier library documents in its header comment.
    Only text_max_bytes shapes the dossier bytes; the other caps only
@@ -48,8 +50,13 @@ function main(): void {
     fail('screenshots/ is missing — add 3 or 4 real renders of the site.');
   }
 
-  rmSync(OUT, { recursive: true, force: true });
+  /* Clear OUT's contents without removing OUT itself: when the grader
+     provides MAKEFUN_OUTPUT_DIR it is a mount point, and removing a
+     mount point fails with EBUSY. Locally this is equivalent. */
   mkdirSync(OUT, { recursive: true });
+  for (const entry of readdirSync(OUT)) {
+    rmSync(join(OUT, entry), { recursive: true, force: true });
+  }
   cpSync(appDir, join(OUT, 'app'), { recursive: true });
   cpSync(shotsDir, join(OUT, 'screenshots'), { recursive: true });
 
@@ -59,10 +66,10 @@ function main(): void {
   const appFiles = countFiles(join(OUT, 'app'));
   const shots = countFiles(join(OUT, 'screenshots'));
   console.log('Statistik Indonesia — build complete.');
-  console.log(`  out/app/: ${appFiles} files`);
-  console.log(`  out/screenshots/: ${shots} files`);
-  console.log(`  out/dossier.json: ${dossier.length} bytes`);
-  console.log('Open out/app/index.html in a browser to view the site.');
+  console.log(`  ${OUT}/app/: ${appFiles} files`);
+  console.log(`  ${OUT}/screenshots/: ${shots} files`);
+  console.log(`  ${OUT}/dossier.json: ${dossier.length} bytes`);
+  console.log(`Open ${OUT}/app/index.html in a browser to view the site.`);
 }
 
 function countFiles(dir: string): number {
