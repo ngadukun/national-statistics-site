@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Statistik Indonesia — National Statistics Dashboard</title>
+<meta name="description" content="A national statistics dashboard for Indonesia: population, economy, prices, jobs, poverty and provinces, with official BPS figures for 2019–2024. Works fully offline.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">ID</span>
+      <div>
+        <h1>Statistik Indonesia</h1>
+        <p class="tagline">National Statistics Dashboard &middot; Republic of Indonesia</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <span class="data-badge">Data: BPS &mdash; Statistics Indonesia</span>
+      <button id="theme-toggle" type="button" aria-pressed="false" title="Switch between light and dark theme">Dark mode</button>
+    </div>
+  </div>
+  <nav class="main-nav" aria-label="Sections">
+    <div class="wrap nav-inner">
+      <a href="#overview" class="nav-link active">Overview</a>
+      <a href="#economy" class="nav-link">Economy</a>
+      <a href="#people" class="nav-link">People</a>
+      <a href="#provinces" class="nav-link">Provinces</a>
+      <a href="#sources" class="nav-link">Sources &amp; methods</a>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section id="overview" class="section">
+    <div class="section-head">
+      <div>
+        <h2>Indonesia at a glance</h2>
+        <p class="lede">The world&rsquo;s fourth most populous country and Southeast Asia&rsquo;s largest economy &mdash; the latest official figures, in one place.</p>
+      </div>
+      <label class="year-picker">Year in focus
+        <select id="year-select" aria-label="Year in focus">
+          <option value="2024" selected>2024</option>
+          <option value="2023">2023</option>
+          <option value="2022">2022</option>
+          <option value="2021">2021</option>
+          <option value="2020">2020</option>
+          <option value="2019">2019</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="kpi-grid" id="kpi-grid" aria-live="polite">
+      <article class="kpi">
+        <p class="kpi-label">Population</p>
+        <p class="kpi-value" id="kpi-population">281.6m</p>
+        <p class="kpi-note">Mid-year estimate, 2024 &middot; BPS</p>
+      </article>
+      <article class="kpi">
+        <p class="kpi-label">GDP growth</p>
+        <p class="kpi-value" id="kpi-growth">5.03%</p>
+        <p class="kpi-note">Year on year, <span class="kpi-year">2024</span> &middot; BPS</p>
+      </article>
+      <article class="kpi">
+        <p class="kpi-label">Inflation (Dec, yoy)</p>
+        <p class="kpi-value" id="kpi-inflation">1.57%</p>
+        <p class="kpi-note">Consumer prices, <span class="kpi-year">2024</span> &middot; BPS</p>
+      </article>
+      <article class="kpi">
+        <p class="kpi-label">Unemployment (Aug)</p>
+        <p class="kpi-value" id="kpi-unemployment">4.91%</p>
+        <p class="kpi-note">Open unemployment rate, <span class="kpi-year">2024</span> &middot; BPS</p>
+      </article>
+      <article class="kpi">
+        <p class="kpi-label">Poverty rate (Sep)</p>
+        <p class="kpi-value" id="kpi-poverty">8.57%</p>
+        <p class="kpi-note">Share of population, <span class="kpi-year">2024</span> &middot; BPS</p>
+      </article>
+      <article class="kpi">
+        <p class="kpi-label">GDP per capita</p>
+        <p class="kpi-value" id="kpi-gdppc">Rp 78.6m</p>
+        <p class="kpi-note">2024 &middot; approx. US$4,900 &middot; BPS</p>
+      </article>
+    </div>
+
+    <div class="card chart-card">
+      <div class="card-head">
+        <div>
+          <h3 id="chart-title">GDP growth, 2019&ndash;2024</h3>
+          <p class="card-sub" id="chart-sub">Real GDP growth, percent year on year &middot; BPS</p>
+        </div>
+        <div class="chart-controls">
+          <div class="tab-group" role="group" aria-label="Indicator">
+            <button type="button" class="tab active" data-indicator="growth">GDP growth</button>
+            <button type="button" class="tab" data-indicator="inflation">Inflation</button>
+            <button type="button" class="tab" data-indicator="unemployment">Unemployment</button>
+            <button type="button" class="tab" data-indicator="poverty">Poverty</button>
+          </div>
+          <div class="tab-group" role="group" aria-label="Range">
+            <button type="button" class="tab range-tab active" data-range="all">2019&ndash;24</button>
+            <button type="button" class="tab range-tab" data-range="recent">2021&ndash;24</button>
+          </div>
+        </div>
+      </div>
+      <div class="canvas-holder"><canvas id="main-chart" height="320" aria-label="Chart of the selected indicator, 2019 to 2024" role="img"></canvas></div>
+      <p class="chart-readout" id="chart-readout" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section id="economy" class="section">
+    <h2>Economy</h2>
+    <p class="lede">Growth held above 5% for three straight years after the 2020 contraction, while inflation fell back to 1.57% in 2024.</p>
+    <div class="two-col">
+      <div class="card">
+        <h3>Key economic facts, 2024</h3>
+        <dl class="fact-list">
+          <div><dt>GDP (nominal)</dt><dd>Rp 22,139 trillion</dd></div>
+          <div><dt>GDP (nominal, USD)</dt><dd>approx. US$1.40 trillion</dd></div>
+          <div><dt>GDP growth</dt><dd>5.03% year on year</dd></div>
+          <div><dt>Exports</dt><dd>US$264.7 billion</dd></div>
+          <div><dt>Imports</dt><dd>US$233.7 billion</dd></div>
+          <div><dt>Trade balance</dt><dd>US$31.0 billion surplus</dd></div>
+          <div><dt>Inflation (Dec, yoy)</dt><dd>1.57%</dd></div>
+          <div><dt>BI policy rate (end 2024)</dt><dd>6.00%</dd></div>
+        </dl>
+        <p class="fine">Sources: BPS (GDP, trade, prices); Bank Indonesia (policy rate). USD figures at the year&rsquo;s average exchange rate, rounded.</p>
+      </div>
+      <div class="card">
+        <h3>Share of GDP by sector, 2024 (approx.)</h3>
+        <p class="card-sub">Percent of nominal GDP &middot; BPS</p>
+        <div class="canvas-holder"><canvas id="sector-chart" height="300" aria-label="Bar chart of GDP shares by sector" role="img"></canvas></div>
+        <p class="fine">Manufacturing remains the largest single sector, followed by wholesale and retail trade and agriculture.</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Yearly indicators, 2019&ndash;2024</h3>
+      <div class="table-scroll">
+        <table class="data-table" id="year-table">
+          <thead>
+            <tr><th scope="col">Year</th><th scope="col">GDP growth (%)</th><th scope="col">Inflation, Dec yoy (%)</th><th scope="col">Unemployment, Aug (%)</th><th scope="col">Poverty, Sep (%)</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="fine">Click a row to focus that year across the page. All figures BPS.</p>
+    </div>
+  </section>
+
+  <section id="people" class="section">
+    <h2>People</h2>
+    <p class="lede">281.6 million people across 38 provinces and more than 17,000 islands &mdash; a young, urbanising population.</p>
+    <div class="kpi-grid">
+      <article class="kpi"><p class="kpi-label">Population (2024)</p><p class="kpi-value">281.6m</p><p class="kpi-note">BPS mid-year estimate</p></article>
+      <article class="kpi"><p class="kpi-label">Population (2020 census)</p><p class="kpi-value">270.2m</p><p class="kpi-note">BPS Population Census 2020</p></article>
+      <article class="kpi"><p class="kpi-label">Human Development Index</p><p class="kpi-value">75.02</p><p class="kpi-note">2024 &middot; BPS &middot; &ldquo;high&rdquo; band</p></article>
+      <article class="kpi"><p class="kpi-label">Life expectancy at birth</p><p class="kpi-value">74.2 yrs</p><p class="kpi-note">2024, approx. &middot; BPS</p></article>
+      <article class="kpi"><p class="kpi-label">Median age</p><p class="kpi-value">approx. 30</p><p class="kpi-note">2024 estimate &middot; UN / BPS</p></article>
+      <article class="kpi"><p class="kpi-label">Gini ratio</p><p class="kpi-value">0.381</p><p class="kpi-note">Sep 2024 &middot; BPS</p></article>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <h3>Poverty is falling again</h3>
+        <p class="card-sub">Poverty rate, September of each year (%) &middot; BPS</p>
+        <div class="canvas-holder"><canvas id="poverty-chart" height="260" aria-label="Bar chart of the poverty rate 2019 to 2024" role="img"></canvas></div>
+        <p class="fine">The pandemic pushed poverty above 10% in 2020; by September 2024 it stood at 8.57%, the lowest in the series shown.</p>
+      </div>
+      <div class="card">
+        <h3>Labour market</h3>
+        <dl class="fact-list">
+          <div><dt>Labour force (Aug 2024)</dt><dd>approx. 152.1 million</dd></div>
+          <div><dt>Employed (Aug 2024)</dt><dd>approx. 144.6 million</dd></div>
+          <div><dt>Unemployment (Aug 2024)</dt><dd>4.91%</dd></div>
+          <div><dt>Informal employment</dt><dd>approx. 59% of workers</dd></div>
+          <div><dt>Youth unemployment (15&ndash;24)</dt><dd>approx. 17% (2024)</dd></div>
+        </dl>
+        <p class="fine">BPS Sakernas (National Labour Force Survey). Informal and youth shares are rounded estimates.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="provinces" class="section">
+    <h2>Provinces</h2>
+    <p class="lede">More than half of all Indonesians live on Java. Search the table or sort it by clicking a column heading.</p>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h3>Largest provinces by population</h3>
+          <p class="card-sub">Population Census 2020 &middot; BPS &middot; 38 provinces in total</p>
+        </div>
+        <label class="search-box">Search provinces
+          <input id="province-search" type="search" placeholder="e.g. Java, Sumatra, Bali&hellip;" autocomplete="off">
+        </label>
+      </div>
+      <div class="canvas-holder"><canvas id="province-chart" height="300" aria-label="Bar chart of the ten largest provinces by population" role="img"></canvas></div>
+      <div class="table-scroll">
+        <table class="data-table sortable" id="province-table">
+          <thead>
+            <tr>
+              <th scope="col"><button type="button" class="sort-btn" data-key="name" data-dir="1">Province</button></th>
+              <th scope="col"><button type="button" class="sort-btn" data-key="pop" data-dir="-1">Population (millions)</button></th>
+              <th scope="col"><button type="button" class="sort-btn" data-key="share" data-dir="-1">Share of Indonesia (%)</button></th>
+              <th scope="col"><button type="button" class="sort-btn" data-key="island" data-dir="1">Main island</button></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="fine" id="province-count"></p>
+    </div>
+  </section>
+
+  <section id="sources" class="section">
+    <h2>Sources &amp; methods</h2>
+    <div class="two-col">
+      <div class="card">
+        <h3>Where the numbers come from</h3>
+        <ul class="source-list">
+          <li><strong>BPS &mdash; Statistics Indonesia</strong> (bps.go.id): GDP and growth, consumer prices, unemployment (Sakernas), poverty, population census and estimates, HDI, Gini ratio. Every headline figure on this page is a published BPS aggregate.</li>
+          <li><strong>Bank Indonesia</strong> (bi.go.id): the BI policy rate.</li>
+          <li><strong>United Nations</strong> population estimates: the median-age figure, labelled approximate.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>How to read this site</h3>
+        <ul class="source-list">
+          <li>Figures marked <strong>approx.</strong> are rounded or estimated from published aggregates; everything else is the official published value for the year shown.</li>
+          <li>Unemployment is the August open unemployment rate; poverty is the September rate; inflation is the December year-on-year rate &mdash; each series uses the same month every year so the years compare like with like.</li>
+          <li>Provincial populations are from the 2020 Population Census, the latest census; the 2024 national total is the BPS mid-year estimate.</li>
+          <li>This site is a static page: it makes no network requests and works offline from its own files.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p><strong>Statistik Indonesia</strong> &mdash; an independent dashboard of published official statistics. Not affiliated with BPS or the Government of Indonesia.</p>
+    <p class="fine">Figures as published by BPS &mdash; Statistics Indonesia and Bank Indonesia; reference years shown beside each figure. Last updated November 2026.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
